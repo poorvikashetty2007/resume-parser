@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resume Parser</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Resume Parser</h1>
+      <p>Upload a PDF, DOCX, or TXT resume and get the key fields pulled out automatically.</p>
+    </header>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('parse') }}" method="post" enctype="multipart/form-data" class="upload-form">
+      <input type="file" name="resume" accept=".pdf,.docx,.txt" required>
+      <button type="submit">Parse resume</button>
+    </form>
+
+    {% if result %}
+    <section class="results">
+      <h2>Parsed from: {{ filename }}</h2>
+
+      <div class="field">
+        <span class="label">Name</span>
+        <span class="value">{{ result.name or "Not detected" }}</span>
+      </div>
+
+      <div class="field">
+        <span class="label">Email</span>
+        <span class="value">{{ result.email or "Not detected" }}</span>
+      </div>
+
+      <div class="field">
+        <span class="label">Phone</span>
+        <span class="value">{{ result.phone or "Not detected" }}</span>
+      </div>
+
+      <div class="field">
+        <span class="label">LinkedIn</span>
+        <span class="value">{{ result.linkedin or "Not detected" }}</span>
+      </div>
+
+      <div class="field">
+        <span class="label">GitHub</span>
+        <span class="value">{{ result.github or "Not detected" }}</span>
+      </div>
+
+      <div class="field">
+        <span class="label">Skills</span>
+        <span class="value">
+          {% if result.skills %}
+            {% for skill in result.skills %}<span class="chip">{{ skill }}</span>{% endfor %}
+          {% else %}Not detected{% endif %}
+        </span>
+      </div>
+
+      <div class="field block">
+        <span class="label">Education</span>
+        <pre class="value">{{ result.education or "Not detected" }}</pre>
+      </div>
+
+      <div class="field block">
+        <span class="label">Experience</span>
+        <pre class="value">{{ result.experience or "Not detected" }}</pre>
+      </div>
+
+      <div class="field block">
+        <span class="label">Projects</span>
+        <pre class="value">{{ result.projects or "Not detected" }}</pre>
+      </div>
+
+      <div class="field block">
+        <span class="label">Certifications</span>
+        <pre class="value">{{ result.certifications or "Not detected" }}</pre>
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</body>
+</html>
